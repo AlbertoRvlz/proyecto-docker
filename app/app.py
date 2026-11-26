@@ -6,8 +6,11 @@ from flask import Flask, request, redirect, render_template_string
 app = Flask(__name__)
 
 def get_db_connection():
+    db_url = os.environ.get("DATABASE_URL")
     for _ in range(10):
         try:
+            if db_url:
+                return psycopg2.connect(db_url)
             return psycopg2.connect(
                 host=os.environ.get("DB_HOST", "db"),
                 database=os.environ.get("DB_NAME", "catalogo_db"),
@@ -98,4 +101,5 @@ def agregar():
     return redirect("/")
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
